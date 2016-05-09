@@ -15,16 +15,16 @@ const unsigned int MAX_Y = 64;
 
 // dirChange sets interface for noDirChange & randDirChange objects
 class dirChange {
-	protected
+	protected:
 		/**
 		 * @method  dirChange()
 		 *
-		 * @param [int] max
-		 * @param [int] threshold
+		 * @param [unsigned int] max
+		 * @param [unsigned int] threshold
 		 */
 		dirChange ( unsigned int max , unsigned int threshold ) { }
 
-	public
+	public:
 		/**
 		 * @method dirChange() always returns FALSE for this class
 		 * @return [bool] FALSE
@@ -37,34 +37,36 @@ class dirChange {
 		 * @method getRandDirChange() factory method returns
 		 *		   appropriate dirChange object
 		 */
-		static dirChange getChanger( unsigned int max , unsigned int threshold ) {
-			if( max > 0 ) {
-				return new randDirChange(max, threshold);
-			} else {
-				return new noDirChange(max, threshold);
-			}
-		}
+//		static dirChange getChanger( unsigned int max , unsigned int threshold ) {
+//			if( max > 0 ) {
+//				return new randDirChange(max, threshold);
+//			} else {
+//				return new noDirChange(max, threshold);
+//			}
+//		}
+		static dirChange * getChanger( unsigned int max , unsigned int threshold );
 
 };
 
 class noDirChange : dirChange {
-	protected
+//	protected:
 		/**
 		 * @method  noDirChange()
 		 *
-		 * @param [int] max
-		 * @param [int] threshold
+		 * @param [unsigned int] max
+		 * @param [unsigned int] threshold
 		 */
-		noDirChange ( unsigned int max , unsigned int threshold ) { }
+//		noDirChange ( unsigned int max , unsigned int threshold ) { }
 
-	public
+//	public:
 		/**
 		 * @method dirChange() always returns FALSE for this class
 		 * @return [bool] FALSE
 		 */
-		bool doChange() {
-			return false;
-		}
+//		bool doChange() {
+//			return false;
+//		}
+
 };
 
 class randDirChange : dirChange {
@@ -81,14 +83,14 @@ class randDirChange : dirChange {
 		 */
 		unsigned int randThresh = 0;
 
-	protected
+	protected:
 
 		/**
 		 * @method  randDirChange() sets whether random direchanger
 		 *			acts or not and if so, what it's parameters are
 		 *
-		 * @param [int] max the maximum value of randomness
-		 * @param [int] threshold the value randomness needs to be
+		 * @param [unsigned int] max the maximum value of randomness
+		 * @param [unsigned int] threshold the value randomness needs to be
 		 *				above to be considered worthy
 		 */
 		randDirChange ( unsigned int max , unsigned int threshold ) {
@@ -101,7 +103,7 @@ class randDirChange : dirChange {
 		}
 
 
-	public
+	public:
 		/**
 		 * @method	dirChange() generates a random number between 0 &
 		 *			randDirChange::randIncPointMax. If number is
@@ -119,6 +121,22 @@ class randDirChange : dirChange {
 
 };
 
+
+
+/**
+ * @method getRandDirChange() factory method returns
+ *		   appropriate dirChange object
+ */
+// this is an attempt to make the factory method work.
+dirChange dirChange::getChanger( unsigned int max , unsigned int threshold ) {
+	if( max > 0 ) {
+		return new randDirChange(max, threshold);
+	} else {
+		return new noDirChange(max, threshold);
+	}
+}
+
+
 //  END:  dirChange family of Classes
 // ==================================================================
 // START: incrementor family of Classes
@@ -133,25 +151,30 @@ class randDirChange : dirChange {
 class incrementor
 {
 
-	protected
+	protected:
 		/**
 		 * @method incrementor constructor
 		 * @param [int] incLimit when to reset the increment value
 		 */
 		incrementor( int incLimit ) { }
 
-	public
+	public:
 		/**
 		 * @method  getInc() factory method for providing the correct
 		 *			type of incrementor object
+		 *
+		 * @var [unsigned int] incLimit maximum times a value can be
+		 *		incremented before it's reset
 		 */
-		static incrementor getInc(unsigned int incLimit) {
-			if( incLimit < 0 ) {
-				return noInc(incLimit);
-			} else {
-				return doInc(incLimit);
-			}
-		}
+//		static incrementor getInc(unsigned int incLimit) {
+//			if( incLimit < 0 ) {
+//				return noInc(incLimit);
+//			} else {
+//				return doInc(incLimit);
+//			}
+//		}
+		static incrementor getInc(unsigned int incLimit);
+
 		/**
 		 * @method	limitReached() increments a value each time it's
 		 *			called and checks that increment against a
@@ -159,8 +182,7 @@ class incrementor
 		 *
 		 * NOTE: if incrementor::doInc is FALSE, FALSE is always returned
 		 *
-		 * @return [bool] TRUE if the maximum number of increments was reached
-		 *				  FALSE otherwise
+		 * @return [bool] always FALSE
 		 */
 		bool limitReached() {
 			return false;
@@ -170,15 +192,14 @@ class incrementor
 
 class noInc : incrementor
 {
-	protected
+//	protected:
 		/**
 		 * @method incrementor constructor
 		 * @param [int] incLimit when to reset the increment value
 		 */
-		noInc( int incLimit ) {
-		}
+//		noInc( int incLimit ) { }
 
-	public
+//	public:
 		/**
 		 * @method	limitReached() increments a value each time it's
 		 *			called and checks that increment against a
@@ -186,12 +207,11 @@ class noInc : incrementor
 		 *
 		 * NOTE: if incrementor::doInc is FALSE, FALSE is always returned
 		 *
-		 * @return [bool] TRUE if the maximum number of increments was reached
-		 *				  FALSE otherwise
+		 * @return [bool] always FALSE
 		 */
-		bool limitReached() {
-			return false;
-		}
+//		bool limitReached() {
+//			return false;
+//		}
 
 };
 
@@ -207,7 +227,7 @@ class doInc : incrementor
 		 */
 		unsigned int max = 1;
 
-	protected
+	protected:
 		/**
 		 * @method doInc constructor
 		 * @param [int] incLimit when to reset the increment value
@@ -216,7 +236,7 @@ class doInc : incrementor
 			this->max = incLimit;
 		}
 
-	public
+	public:
 		/**
 		 * @method	limitReached() increments a value each time it's
 		 *			called and checks that increment against a
@@ -240,6 +260,22 @@ class doInc : incrementor
 
 };
 
+
+/**
+ * @method  getInc() factory method for providing the correct
+ *			type of incrementor object
+ *
+ * @var [unsigned int] incLimit maximum times a value can be
+ *		incremented before it's reset
+ */
+// this is an attempt to make the factory method work.
+incrementor * incrementor::getInc(unsigned int incLimit) {
+	if( incLimit < 0 ) {
+		return noInc(incLimit);
+	} else {
+		return doInc(incLimit);
+	}
+}
 
 //  END:  incrementor family of Classes
 // ==================================================================
@@ -305,7 +341,7 @@ class wormCoord
 		 *
 		 * @return unsigned int[6]
 		 */
-		virtual unsigned int *getCoord() {
+		virtual unsigned int  getCoord() {
 			unsigned int a = 0;
 			unsigned int b = 0;
 
@@ -390,7 +426,8 @@ class wormCoord
  * @class worm handles rendering the whole worm based on the X & Y
  *		  wormCoord objects it manages
  */
-class worm {
+class worm
+{
 	wormCoord *x;
 	wormCoord *y;
 
