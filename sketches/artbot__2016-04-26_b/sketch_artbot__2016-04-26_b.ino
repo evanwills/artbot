@@ -10,10 +10,10 @@ int x = 0;  // this is an important new step - here we are making a container ca
 int y = 1;
 //int z = 0;
 //bool yMax = false;
-int a = 0;
-int b = 1;
-int c = 0;
-int d = 0;
+unsigned int a = 0;
+unsigned int b = 1;
+unsigned int c = 0;
+unsigned int d = 0;
 // char status = '';
 //this is a container that can only fit integers inside of it - an integer is a whole number (the ones we count with)
 //this container is called a variable. Variables are central to maths and computing.
