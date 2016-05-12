@@ -1,4 +1,4 @@
-#include <Wire.h>    // these are all the libraries we need for working with our screen.
+	#include <Wire.h>    // these are all the libraries we need for working with our screen.
 #include <SPI.h>
 #include <Adafruit_SSD1306.h>
 #include <Adafruit_GFX.h>
@@ -14,7 +14,8 @@ const unsigned int MAX_Y = 64;
 // START: dirChange family of Classes
 
 // dirChange sets interface for noDirChange & randDirChange objects
-class dirChange {
+class dirChangeInterface
+{
 	protected:
 		/**
 		 * @method  dirChange()
@@ -22,7 +23,7 @@ class dirChange {
 		 * @param [unsigned int] max
 		 * @param [unsigned int] threshold
 		 */
-		dirChange ( unsigned int max , unsigned int threshold ) { }
+		dirChangeInterface ( unsigned int max , unsigned int threshold ) { }
 
 	public:
 		/**
@@ -33,22 +34,28 @@ class dirChange {
 			return false;
 		}
 
+};
+
+// factory class
+class dirChange : dirchangeInterface
+{
+	public:
 		/**
 		 * @method getRandDirChange() factory method returns
 		 *		   appropriate dirChange object
 		 */
-//		static dirChange getChanger( unsigned int max , unsigned int threshold ) {
-//			if( max > 0 ) {
-//				return new randDirChange(max, threshold);
-//			} else {
-//				return new noDirChange(max, threshold);
-//			}
-//		}
-		static dirChange * getChanger( unsigned int max , unsigned int threshold );
-
+		static dirChange getChanger( unsigned int max , unsigned int threshold ) {
+			if( max > 0 ) {
+				return new randDirChange(max, threshold);
+			} else {
+				return new noDirChange(max, threshold);
+			}
+		}
+//		static dirChange * getChanger( unsigned int max , unsigned int threshold );
 };
 
-class noDirChange : dirChange {
+class noDirChange : dirchangeInterface
+{
 //	protected:
 		/**
 		 * @method  noDirChange()
@@ -69,7 +76,8 @@ class noDirChange : dirChange {
 
 };
 
-class randDirChange : dirChange {
+class randDirChange : dirchangeInterface
+{
 	private:
 		/**
 		 * @var randMax the maximum value for the random number
@@ -93,12 +101,13 @@ class randDirChange : dirChange {
 		 * @param [unsigned int] threshold the value randomness needs to be
 		 *				above to be considered worthy
 		 */
-		randDirChange ( unsigned int max , unsigned int threshold ) {
-			this->randMax = max;
+		randDirChange ( unsigned int max , unsigned int threshold ) : dirchange( max , threshold ) {
+
+			randMax = max;
 			if( threshold < max ) {
-				this->randThresh = threshold;
+				randThresh = threshold;
 			} else {
-				this->randThresh = int( max * 0.9 );
+				randThresh = int( max * 0.9 );
 			}
 		}
 
@@ -121,23 +130,19 @@ class randDirChange : dirChange {
 
 };
 
-
-
-/**
- * @method getRandDirChange() factory method returns
- *		   appropriate dirChange object
- */
-// this is an attempt to make the factory method work.
-dirChange dirChange::getChanger( unsigned int max , unsigned int threshold ) {
-	if( max > 0 ) {
-		return new randDirChange(max, threshold);
-	} else {
-		return new noDirChange(max, threshold);
-	}
-}
-
-
 //  END:  dirChange family of Classes
+// ==================================================================
+
+
+
+
+
+
+
+
+
+
+
 // ==================================================================
 // START: incrementor family of Classes
 
@@ -148,7 +153,7 @@ dirChange dirChange::getChanger( unsigned int max , unsigned int threshold ) {
  *		  incremented and incrementor::limitReached() will always
  *		  return FALSE;
  */
-class incrementor
+class incrementorInterface
 {
 
 	protected:
@@ -159,22 +164,6 @@ class incrementor
 		incrementor( int incLimit ) { }
 
 	public:
-		/**
-		 * @method  getInc() factory method for providing the correct
-		 *			type of incrementor object
-		 *
-		 * @var [unsigned int] incLimit maximum times a value can be
-		 *		incremented before it's reset
-		 */
-//		static incrementor getInc(unsigned int incLimit) {
-//			if( incLimit < 0 ) {
-//				return noInc(incLimit);
-//			} else {
-//				return doInc(incLimit);
-//			}
-//		}
-		static incrementor getInc(unsigned int incLimit);
-
 		/**
 		 * @method	limitReached() increments a value each time it's
 		 *			called and checks that increment against a
@@ -190,7 +179,26 @@ class incrementor
 
 };
 
-class noInc : incrementor
+// factroy class
+class incrementor : incrementorInterface
+{
+	public:
+		/**
+		 * @method  getInc() factory method for providing the correct
+		 *			type of incrementor object
+		 *
+		 * @var [unsigned int] incLimit maximum times a value can be
+		 *		incremented before it's reset
+		 */
+		static incrementor getInc(unsigned int incLimit) {
+			if( incLimit < 0 ) {
+				return noInc(incLimit);
+			} else {
+				return doInc(incLimit);
+			}
+		}
+}
+class noInc : incrementorInterface
 {
 //	protected:
 		/**
@@ -215,7 +223,7 @@ class noInc : incrementor
 
 };
 
-class doInc : incrementor
+class doInc : incrementorInterface
 {
 	private:
 		/**
@@ -232,8 +240,8 @@ class doInc : incrementor
 		 * @method doInc constructor
 		 * @param [int] incLimit when to reset the increment value
 		 */
-		doInc( int incLimit ) {
-			this->max = incLimit;
+		doInc( int incLimit ) : incrementor( incLimit ){
+			max = incLimit;
 		}
 
 	public:
@@ -248,36 +256,30 @@ class doInc : incrementor
 		bool limitReached() {
 			bool output = false;
 
-			if( this->inc == this->max ) {
+			if( inc == max ) {
 				output = true;
-				this->inc = 0;
+				inc = 0;
 			} else {
-				this->inc = this->inc + 1;
+				inc += 1;
 			}
 
 			return output;
 		}
-
 };
 
-
-/**
- * @method  getInc() factory method for providing the correct
- *			type of incrementor object
- *
- * @var [unsigned int] incLimit maximum times a value can be
- *		incremented before it's reset
- */
-// this is an attempt to make the factory method work.
-incrementor * incrementor::getInc(unsigned int incLimit) {
-	if( incLimit < 0 ) {
-		return noInc(incLimit);
-	} else {
-		return doInc(incLimit);
-	}
-}
-
 //  END:  incrementor family of Classes
+// ==================================================================
+
+
+
+
+
+
+
+
+
+
+
 // ==================================================================
 // START: wormCoord
 
@@ -290,6 +292,8 @@ incrementor * incrementor::getInc(unsigned int incLimit) {
 class wormCoord
 {
 	private:
+		int i = 0;
+		unsigned int max = 6;
 		/**
 		 * @var incPoint how much to increment the coordinate each
 		 *		time.
@@ -318,7 +322,7 @@ class wormCoord
 		 *		each other) along the axis that this object is
 		 *		responsible for
 		 */
-		unsigned int point[6] = { 0, 0, 0, 0, 0, 0 };
+		unsigned int point = { 0, 0, 0, 0, 0, 0 };
 
 		/**
 		 * @var preSetPoint object that manages incrementing over a
@@ -341,7 +345,7 @@ class wormCoord
 		 *
 		 * @return unsigned int[6]
 		 */
-		virtual unsigned int  getCoord() {
+		void updateCoords() {
 			unsigned int a = 0;
 			unsigned int b = 0;
 
@@ -351,7 +355,7 @@ class wormCoord
 
 				// Move all the coordinates down the line to make way
 				// for the new one.
-				for( a = 6; a >= 0 ; a = -1 ) {
+				for( a = 6; a >= 0 ; a -= 1 ) {
 					b = a - 1;
 					this->point[a] = this->point[b];
 				}
@@ -373,7 +377,7 @@ class wormCoord
 			}
 
 			// return the array of coordinates on this axis
-			return this->point;
+//			return this->point;
 		}
 
 
@@ -415,7 +419,19 @@ class wormCoord
 			randomDirChange = dirChange::getChanger(max, threshold);
 		}
 
+		bool hasNext() {
+			i += 1;
+			if( i < max ) {
+				return true;
+			} else {
+				i = -1;
+				return false;
+			}
+		}
 
+		unsigned int getCoord() {
+			return point[a];
+		}
 };
 
 //  END:  wormCoord
@@ -428,8 +444,8 @@ class wormCoord
  */
 class worm
 {
-	wormCoord *x;
-	wormCoord *y;
+	wormCoord x;
+	wormCoord y;
 
 	public:
 		worm( unsigned int maxX, unsigned int maxY ) {
@@ -437,32 +453,39 @@ class worm
 
 //			randomSeed( micros()*analogRead(0) );
 			// get the Y coordinate manager object
-			this->x = new wormCoord( int(random( 0 , maxX )) , int(random( 0 , 10 )) , int(random( 3 , 27 )) , maxX );
-			this->x->setRandDirChange(int(random( 13 , 29 )))
+			x = new wormCoord( int(random( 0 , maxX )) , int(random( 0 , 10 )) , int(random( 3 , 27 )) , maxX );
+			x->setRandDirChange(int(random( 13 , 29 )));
 
 //			randomSeed( micros()*analogRead(0) );
 			// get the Y coordinate manager object
-			this->y = new wormCoord( int(random( 0 , maxY )) ,  int(random( 0 , 10 )) , int(random( 3 , 27 )) , maxY );
-			this->y->setRandDirChange(int(random( 13 , 29 )))
+			y = new wormCoord( int(random( 0 , maxY )) ,  int(random( 0 , 10 )) , int(random( 3 , 27 )) , maxY );
+			y->setRandDirChange(int(random( 13 , 29 )));
 		}
 
-		virtual void drawWorm() {
+		void drawWorm() {
 			unsigned int a = 0;
-			unsigned int tmpX[6];
-			unsigned int tmpY[6];
+			unsigned int *tmpX;
+			unsigned int *tmpY;
 
 			// get the X & Y coordinates
-			tmpX = this->x->getCoord();
-			tmpY = this->y->getCoord();
+			x.updateCoords();
+			y.updateCoords();
 
 //			display.drawPixel(tmpX[0], tmpY[0], 1);
 
 			// draw the head of the worm
-			display.drawCircle( tmpX[0] , tmpY[0] , 3 , 1 );
+			x.hasNext();
+			y.hasNext();
+			display.drawCircle( x.getCoord() , y.getCoord() , 3 , 1 );
 
 			for( a = 1 ; a < 6 ; a = a +1 ) {
 				// draw the next point on the worm
 				display.drawPixel(tmpX[a], tmpY[a], 1);
+			}
+			while( x.hasNext() == true ) {
+				y.hasNext();
+
+				display.drawPixel( x.getCoord() , y.getCoord() , 1 );
 			}
 
 			// render the output to screen
