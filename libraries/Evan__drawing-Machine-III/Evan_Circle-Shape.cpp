@@ -3,42 +3,19 @@
 // ==================================================================
 // START: circleType family
 
-class circleShape
+class circleShape : circleInterface // interface
 {
 	private:
-		double _x;
-		double _y;
-		double _originX;
-		double _originY;
 		double _initialAngle;
 		stepper * _angleStep;
 
 	public:
-		virtual bool calculateXY( double radiusX , double radiusY ) = false;
+		/**
+		 * @method	setRadiusPointXY() sets the _radiusPOintX &
+		 *			 for the circle object
+		 */
+		virtual void setRadiusPointXY( double x , double y );
 
-		virtual void initXY( double originX , double originY );
-
-		bool setOriginXY( double originX , double originY ) {
-			_originX = originX;
-			_originY = originY;
-		}
-
-		double getX() {
-			return _x;
-		}
-		double getY() {
-			return _y;
-		}
-
-		double getOriginX() {
-			return _originX;
-		}
-		double getOriginY() {
-			return _originY;
-		}
-		double getInitialAngle() {
-			return _initialAngle;
-		}
 }
 
 class circle : circleShape
@@ -53,7 +30,7 @@ class circle : circleShape
 			_angleStep = angleStep;
 		}
 
-		bool calculateXY( double radiusX , double radiusY ) {
+		void rotate() {
 		}
 
 		void initXY( double originX , double originY ) {
@@ -78,7 +55,7 @@ class ellipse : circleShape
 			_radiusoffsetY = radiusoffsetY;
 		}
 
-		bool calculateXY( double radiusX , double radiusY ) {
+		void rotate( ) {
 		}
 
 		void initXY( double originX , double originY ) {
