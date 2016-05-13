@@ -8,6 +8,8 @@ class circleShape : circleInterface // interface
 	private:
 		double _initialAngle;
 		stepper * _angleStep;
+		double tmpX;
+		double tmpY;
 
 	public:
 		/**
@@ -15,6 +17,16 @@ class circleShape : circleInterface // interface
 		 *			 for the circle object
 		 */
 		virtual void setRadiusPointXY( double x , double y );
+
+		virtual void rotateXY( double x , double y );
+
+		double getRadiusPointX() {
+			return tmpX;
+		}
+
+		double getRadiusPointY() {
+			return tmpY;
+		}
 
 }
 
@@ -31,7 +43,12 @@ class circle : circleShape
 		}
 
 		void rotate() {
+			rotateXY( _radiusPointX , _radiusPointY );
+			_radiusPointX = tmpX;
+			_radiusPointY = tmpY;
 		}
+
+
 
 		void initXY( double originX , double originY ) {
 			setOriginXY( originX, originY );

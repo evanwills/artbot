@@ -11,9 +11,14 @@
 // ==================================================================
 // START: circleManager family
 
-// circleManager class objects manage rotating the radiusPointX & Y
-// of each circle in the stack relative to the origin of the current
-// circle. It then gets its direct child to do the same recursively.
+// circleManager class objects manage recursively rotating the
+// radiusPointX & Y of each circle in the stack relative to the
+// origin of the current circle.
+
+// Not sure how this needs to be coded but... the _radiusPointX,
+// _circle->_radiusPointX, _childCircle->_originX and
+// _childCircle->_circle->_originX should all share the same pointer.
+// The same goes for the _radiusPointY
 
 class circleManager : circleInterface
 {
@@ -132,7 +137,7 @@ class singleCircle : circleManager
 		 * @method	rotate() rotates its own radius points
 		 */
 		void rotate() {
-			_circle->setOriginXY(_originX, _originY);
+			_circle->setOriginXY( _originX , _originY );
 			_circle->rotate( _radiusPointX , _radiusPointY );
 			_radiusPointX = _circle->getX();
 			_radiusPointY = _circle->getY();
@@ -191,12 +196,12 @@ class multiCircle : singleCircle
 				radiusPointX = childCircle->getRadiusPointX( tmpDepth );
 				radiusPointY = childCircle->getRadiusPointY( tmpDepth );
 
-				_circle->rotate( radiusPointX , radiusPointY );
+				_circle->rotateXY( radiusPointX , radiusPointY );
 
 				childCircle->setRadiusPointXY( _circle->getX() , _circle->getY() , tmpDepth );
 			}
 
-			_circle->calculateXY( _radiusPointX , _radiusPointY );
+			_circle->rotate();
 
 			_radiusPointX = _circle->getX();
 			_radiusPointY = _circle->getY();

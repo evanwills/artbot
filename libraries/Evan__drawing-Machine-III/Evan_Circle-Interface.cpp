@@ -10,15 +10,23 @@ class circleInterface
 
 	public:
 		/**
-		 * @method	initialiseXY() puts the _radiusPointX &
+		 * @method	initXY() puts the _radiusPointX &
 		 *			_radiusPointY at their initial location
+		 *
+		 * @param x (12 O'clock) coordinate of the X radius point to
+		 *			be used as the starting point from which, the
+		 *			radius is rotated to the specified angle
+		 *
+		 * @param y (12 O'clock) coordinate of the Y radius point to
+		 *			be used as the starting point from which, the
+		 *			radius is rotated to the specified angle
 		 */
 		virtual void initXY( double x , double y );
 
 		/**
 		 * @method rotate() move the radiusPoint to a new location
 		 */
-		virtual void rotate();
+		virtual void rotate( double x , double y );
 
 		/**
 		 * @method	setOriginXY() sets the _originX & _originY for
