@@ -37,12 +37,12 @@ class straightBoom : boomIntegratorInterface
 class simpleScissorBoom : boomIntegratorInterface
 {
 	private:
-		singleBoom * _boom;
 		stepper * _pivotPosition;
 
 	public:
-		straightBoom( singleBoom * boom , stepper * pivotPosition ) {
-			_boom = boom;
+		straightBoom(  singleBoom * firstBoom , singleBoom * secondBoom , stepper * pivotPosition ) {
+			_firstBoom = firstBoom;
+			_secondBoom = secondBoom;
 			if( pivotPosition->withinMinMax(0,1) == false ) {
 				// throw error
 			}
@@ -73,14 +73,18 @@ class asymetricalScissorBoom : boomIntegratorInterface
 class whackyScissorBoom : boomIntegratorInterface
 {
 	public:
-		straightBoom(  singleBoom * firstBoom , singleBoom * secondBoom , stepper * pivotPosition ) {
+		straightBoom(  singleBoom * firstBoom , singleBoom * secondBoom , stepper * pivotFirstPosition , stepper * pivotSecondPosition ) {
 			_firstBoom = firstBoom;
 			_secondBoom = secondBoom;
 
-			if( pivotPosition->withinMinMax(0,1) == false ) {
+			if( pivotFirstPosition->withinMinMax(0,1) == false ) {
 				// throw error
 			}
-			_pivotPosition = pivotPosition;
+			_pivotFirstPosition = pivotFirstPosition;
+			if( pivotSecondPosition->withinMinMax(0,1) == false ) {
+				// throw error
+			}
+			_pivotSecondPosition = pivotSecondPosition;
 		}
 		void setEndPoint( double firstOriginX , double firstOriginY , double secondOriginX , double secondOriginY ) {
 
@@ -90,11 +94,12 @@ class whackyScissorBoom : boomIntegratorInterface
 class TBoom : boomIntegratorInterface
 {
 	private:
-		singleBoom * _boom;
 		stepper * _boomOffset;
 	public:
-		straightBoom(  singleBoom * boom , stepper * boomOffset ) {
-			_boom = boom;
+		straightBoom(  singleBoom * firstBoom , singleBoom * secondBoom , stepper * boomOffset ) {
+			_firstBoom = firstBoom;
+			_secondBoom = secondBoom;
+
 			if( boomOffset->withinMinMax(0,1) == false ) {
 				// throw error
 			}
