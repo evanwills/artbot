@@ -6,12 +6,14 @@ class stepper
 {
 	protected:
 		double _step;
+		double _stepCumulative;
 		double _lastStep;
 		double _min;
 		double _max;
 
 	public:
 		virtual double getStep()  = 0;
+		virtual double getStepCumulative() = 0;
 		virtual double getLastStep() = 0;
 //		virtual void preLoop(int loops);
 
@@ -42,12 +44,15 @@ class stepperFixed : stepper {
 	public:
 		stepperFixed( double step ) {
 			_step = step;
-			_lastStep = step;
 			_min = step;
 			_max = step;
 		}
 
 		double getStep() {
+			return _step;
+		}
+
+		double getStepCumulative() {
 			return _step;
 		}
 
@@ -80,7 +85,23 @@ class stepperLinier : stepper {
 			return _step;
 		}
 
-		StepperLinier( double step , double increment , double min , double max ) {
+		double getStepCumulative() {
+			_lastStep = _step;
+			_step += _increment;
+			_stepCumulative += _step;
+			if( _stepCumulative > _max ) {
+				// bounce _step off max
+				_step = _max - ( _stepCumulative - _max );
+				_increment = -_increment;
+			} else if( _stepCumulative < min ) {
+				// bounce _step off min
+				_step = _min + ( _min - _stepCumulative );
+				_increment = -_increment;
+			}
+			return _step;
+		}
+
+		stepperLinier( double step , double increment , double min , double max ) {
 			if( min > max ) {
 				_min = max;
 				_max = min;

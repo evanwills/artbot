@@ -28,6 +28,7 @@ class circleShape : circleInterface // interface
 			return tmpY;
 		}
 
+
 }
 
 class circle : circleShape
@@ -51,7 +52,7 @@ class circle : circleShape
 
 
 		void initXY( double originX , double originY ) {
-			setOriginXY( originX, originY );
+			setOriginXY( originX , originY );
 		}
 }
 
@@ -82,20 +83,4 @@ class ellipse : circleShape
 
 //  END: circleType
 // ==================================================================
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
