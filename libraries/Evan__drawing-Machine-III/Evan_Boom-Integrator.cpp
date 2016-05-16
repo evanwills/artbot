@@ -1,4 +1,4 @@
-class boomIntegratorInterface
+class boomInterface
 {
 	public:
 		virtual void setEndPoint( double firstOriginX , double firstOriginY , double secondOriginX , double secondOriginY );
@@ -9,10 +9,10 @@ class boomIntegratorInterface
 }
 
 
-class boomIntegrator : boomIntegratorInterface {
+class boomAbstract : boomInterface {
 	private:
-		singleBoom * _firstBoom;
-		singleBoom * _secondBoom;
+		stepper * _firstBoom;
+		stepper * _secondBoom;
 		double _endX = 0;
 		double _endY = 0;
 
@@ -32,11 +32,11 @@ class boomIntegrator : boomIntegratorInterface {
  *			the base points for each arm  setEndPoint() gives the
  *			third point on the triangle
  */
-class straightBoom : boomIntegrator
+class straightBoom : boomAbstract
 {
 	private:
-		singleBoom * _firstBoom;
-		singleBoom * _secondBoom;
+		stepper * _firstBoom;
+		stepper * _secondBoom;
 
 	public:
 		/**
@@ -47,7 +47,7 @@ class straightBoom : boomIntegrator
 		 * @param secondBoom provides the offset and length for the
 		 *		  second boom
 		 */
-		straightBoom( singleBoom * firstBoom , singleBoom * secondBoom ) {
+		straightBoom( stepper * firstBoom , stepper * secondBoom ) {
 			_firstBoom = firstBoom;
 			_secondBoom = secondBoom;
 		}
@@ -67,7 +67,7 @@ class straightBoom : boomIntegrator
  * NOTE: the distance from the pivotPoint to the end of the boom is
  *		 mirrored to join the booms back together
  */
-class simpleScissorBoom : boomIntegrator
+class simpleScissorBoom : boomAbstract
 {
 	private:
 		stepper * _pivotPosition;
@@ -85,7 +85,7 @@ class simpleScissorBoom : boomIntegrator
 		 *		  The output of pivotPosition->getStep() be between
 		 *		  zero and one
 		 */
-		simpleScissorBoom(  singleBoom * firstBoom , singleBoom * secondBoom , stepper * pivotPosition ) {
+		simpleScissorBoom(  stepper * firstBoom , stepper * secondBoom , stepper * pivotPosition ) {
 			_firstBoom = firstBoom;
 			_secondBoom = secondBoom;
 			if( pivotPosition->withinMinMax( 0 , 1 ) == false ) {
@@ -111,7 +111,7 @@ class simpleScissorBoom : boomIntegrator
  * NOTE: the distance from the pivotPoint to the end of the boom is
  *		 mirrored to join the booms back together
  */
-class asymetricalScissorBoom : boomIntegrator
+class asymetricalScissorBoom : boomAbstract
 {
 	public:
 		/**
@@ -127,7 +127,7 @@ class asymetricalScissorBoom : boomIntegrator
 		 *		  The output of pivotPosition->getStep() be between
 		 *		  zero and one
 		 */
-		asymetricalScissorBoom(  singleBoom * firstBoom , singleBoom * secondBoom , stepper * pivotPosition ) {
+		asymetricalScissorBoom(  stepper * firstBoom , stepper * secondBoom , stepper * pivotPosition ) {
 			_firstBoom = firstBoom;
 			_secondBoom = secondBoom;
 
@@ -154,7 +154,7 @@ class asymetricalScissorBoom : boomIntegrator
  * NOTE: the distance from the pivotPoint to the end of the boom is
  *		 mirrored to join the booms back together
  */
-class whackyScissorBoom : boomIntegratorInterface
+class whackyScissorBoom : boomAbstract
 {
 	private:
 		stepper * _pivotFirstPosition;
@@ -178,7 +178,7 @@ class whackyScissorBoom : boomIntegratorInterface
 		 *		  The output of pivotSecondPosition->getStep() be
 		 *		  between zero and one
 		 */
-		whackyScissorBoom( singleBoom * firstBoom , singleBoom * secondBoom , stepper * pivotFirstPosition , stepper * pivotSecondPosition ) {
+		whackyScissorBoom( stepper * firstBoom , stepper * secondBoom , stepper * pivotFirstPosition , stepper * pivotSecondPosition ) {
 			_firstBoom = firstBoom;
 			_secondBoom = secondBoom;
 
@@ -202,7 +202,7 @@ class whackyScissorBoom : boomIntegratorInterface
  *			connected by a straight line and the boom comes off that
  *			line at a given offset
  */
-class Tboom : boomIntegrator
+class Tboom : boomAbstract
 {
 	private:
 		stepper * _boomOffset;
@@ -220,7 +220,7 @@ class Tboom : boomIntegrator
 		 *		  The output of boomOffset->getStep() be between zero
 		 *		  and one
 		 */
-		Tboom(  singleBoom * firstBoom , singleBoom * secondBoom , stepper * boomOffset ) {
+		Tboom(  stepper * firstBoom , stepper * secondBoom , stepper * boomOffset ) {
 			_firstBoom = firstBoom;
 			_secondBoom = secondBoom;
 
