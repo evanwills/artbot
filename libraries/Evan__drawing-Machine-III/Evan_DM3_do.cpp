@@ -1,39 +1,93 @@
-
 #include <EVAN_stepper.cpp>
 #include <EVAN_itterator.cpp>
 #include <EVAN_Circle-Interface.cpp>
 #include <EVAN_Circle-Shape.cpp>
 #include <EVAN_Circle-Manager.cpp>
-#include <EVAN_Single-Boom.cpp>
-#include <EVAN_Boom-integrator.cpp>
+#include <EVAN_Boom.cpp>
 #include <EVAN_MD3_working-model.cpp>
 
 const int TIMES = 10000;
-const int WIDTH = 4500;
+const int WIDTH = 5000;
 incrementorInterface loopTimes;
 dm3WorkingModel MD3;
 
+const double OFFSET = WIDTH / 2;
+const double BOOM_ONE_LEN = WIDTH * 2;
+const double BOOM_TWO_LEN = WIDTH * 2;
+
 void setup() {
 	loopTimes = new doInc(TIMES);
+	circle tableRotator = new circle( 0 , new stepperFixed( 0.13 ) , new stepperFixed( OFFSET ));
+	tableRotator->initXY( OFFSET , OFFSET );
 
-	circleManager circleOne = new multiCircle( new circle( 0 , new stepperFixed( 0.37 ) , new stepperFixed( 180 ) ) );
-	circleOne->initXY( (WIDTH / 2) , (width * 2.5) );
-	circleOne->setChildCircle( new multiCircle( new circle( 0 , new stepperFixed( 0.77 ) , new stepperFixed( 219 ) ) ) );
 
-	circleManager circleTwo = new multiCircle( new circle( 0 , new stepperFixed( 0.29 ) , new stepperFixed( 57 ) ) );
-	circleTwo->initXY( (width * 2 ) , (WIDTH / 2) );
-	circleTwo->setChildCircle( new multiCircle( new circle( 0 , new stepperFixed( 0.83 ) , new stepperFixed( 301 ) ) ) );
+	// this one sets
+	circleManager circleOne = new multiCircle(
+		new circle(
+			 180
+			,new stepperFixed( 0 )
+			,new stepperFixed( BOOM_ONE_LEN )
+		)
+	);
+	circleOne->initXY( OFFSET , OFFSET );
+	circleOne->setChildCircle(
+		new multiCircle(
+			new circle(
+				 0
+				,new stepperFixed( 0.37 )
+				,new stepperFixed( 1613 )
+			)
+		)
+	);
+	circleOne->setChildCircle(
+		new multiCircle(
+			new circle(
+				 0
+				,new stepperFixed( 0.77 )
+				,new stepperFixed( 887 )
+			)
+		)
+	);
+
+	//
+	circleManager circleTwo = new multiCircle(
+		new circle(
+			120
+			,new stepperFixed( 0 )
+			,new stepperFixed( BOOM_TWO_LEN )
+		)
+	);
+	circleTwo->initXY( OFFSET , OFFSET );
+	circleTwo->setChildCircle(
+		new multiCircle(
+			new circle(
+				 0
+				,new stepperFixed( 0.29 )
+				,new stepperFixed( 1193 )
+			)
+		)
+	);
+	circleTwo->setChildCircle(
+		new multiCircle(
+			new circle(
+				 0
+				,new stepperFixed( 0.83 )
+				,new stepperFixed( 1307 )
+			)
+		)
+	);
+
 
 	MD3 = new dm3WorkingModel(
 		 WIDTH	// width
 		,WIDTH	// height
 		,new straightBoom( // booms
-			 singleBoom( 0 , 0 , new stepperFixed( (width * 1.25) ) )
-			,singleBoom( 0 , 0 , new stepperFixed( (width * 1.25) ) )
+			 new stepperFixed( BOOM_ONE_LEN )
+			,new stepperFixed( BOOM_TWO_LEN )
 		 )
 		,circleOne	// firstCircle
 		,circleTwo	// secondCircle
-		,new circle( 0 , new stepperFixed( 0.13 ) , new stepperFixed( (WIDTH / 2) ) ) //tableRotator
+		,tableRotator //tableRotator
 	);
 
 }
