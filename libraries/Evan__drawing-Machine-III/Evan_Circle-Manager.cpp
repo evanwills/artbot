@@ -20,7 +20,7 @@
 // _childCircle->_circle->_originX should all share the same pointer.
 // The same goes for the _radiusPointY
 
-class circleManager : circleInterface
+class circleManager : abstractCircle
 {
 	private:
 		circleType * _circle;
@@ -42,7 +42,7 @@ class circleManager : circleInterface
 		 *		 be OK to use a stack even if the output of depthOK()
 		 *		 is FALSE.
 		 */
-		virtual bool depthOK() = 0;
+		virtual bool depthOK( bool fix ) = 0;
 
 		/**
 		 * @method	setChildCircle() adds another circleManager
@@ -173,6 +173,7 @@ class multiCircle : singleCircle
 			_depth += 1;
 			if( _childCircle ===  null ) {
 				_childCircle = childCircle;
+				_childCircle->initXY( _radiusPointX , _radiusPointY );
 			} else {
 				_childCircle->setChildCircle(childCircle);
 			}
@@ -215,12 +216,30 @@ class multiCircle : singleCircle
 		 * @method depthOK() checks whether the hierarchy of nested
 		 *			circles is correct
 		 */
-		bool depthOK() {
-			if( _childCircle === null || _childCircle->getDepth() + 1 != _depth ) {
-				return false;
+		bool depthOK( bool fix) {
+			bool output = false;
+			if( _childCircle == null ){
+				if( _depth != 0 ) {
+					if( fix == true ){
+						_depth = 0;
+						output true;
+					}
+				} else {
+					output true;
+				}
+			} else {
+				bool output = _childCircle->depthOK( fix );
+				if( _childCircle->getDepth() + 1 != _depth ) {
+					if( fix == true ){
+						_depth = _childCircle->getDepth() + 1;
+						output = true;
+					}
+				} else {
+					output = true;
+				}
 			}
 			// this looks OK lets see whether the child is OK
-			return _childCircle->depthOK();
+			return output;
 		}
 
 		void setRadiusPointXY( double x , double y , unsigned int depth ) {

@@ -6,14 +6,19 @@ class stepper
 {
 	protected:
 		double _step;
-		double _stepCumulative;
-		double _lastStep;
 		double _min;
 		double _max;
+		double _lastStep;
+		double _stepCumulative;
+		double _cumulativeMin;
+		double _cumulativeMax;
+		bool _doCumulative = false;
+		bool _doCumulativeMinMax = false;
 
 	public:
 		virtual double getStep()  = 0;
-		virtual double getStepCumulative() = 0;
+		virtual double getStepAcumulate() = 0;
+		virtual double getStepAcumulateResetAtMax() = 0;
 		virtual double getLastStep() = 0;
 //		virtual void preLoop(int loops);
 
@@ -23,6 +28,15 @@ class stepper
 
 		double getMax() {
 			return _max;
+		}
+
+		void setCumlativeMinMax( double min , double max ) {
+			_doCumulative = true;
+			if( min < max ) {
+				_cumulativeMin = min;
+				_cumulativeMax = max;
+				_doCumulativeMinMax = true;
+			}
 		}
 
 		bool withinMinMax( double min , double max ) {
@@ -49,11 +63,27 @@ class stepperFixed : stepper {
 		}
 
 		double getStep() {
+			if( _doCumulative == true ) {
+				if( _doCumulativeMinMax == true ) {
+					return getStepAcumulateResetAtMax()
+				} else {
+					return getStepAcumulate()
+				}
+			}
 			return _step;
 		}
 
-		double getStepCumulative() {
-			return _step;
+		double getStepAcumulate() {
+			_stepCumulative += _step;
+			return _stepCumulative;
+		}
+
+		double getStepAcumulateResetAtMax() {
+			_stepCumulative += _step;
+			if( _stepCumulative >= _CumulativeMax ) {
+				_stepCumulative = _cumulativeMin + ( _stepCumulative - _cumulativeMax );
+			}
+			return _stepCumulative;
 		}
 
 		double getLastStep() {
@@ -67,38 +97,40 @@ class stepperFixed : stepper {
 class stepperLinier : stepper {
 	protected:
 		double _increment;
+		double _doMinMax(double input) {
+			if( input > _max ) {
+				// bounce _step off max
+				_step = _max - ( input - _max );
+				_increment = -_increment;
+			} else if( input < min ) {
+				// bounce _step off min
+				_step = _min + ( _min - input );
+				_increment = -_increment;
+			}
+		}
 
 	public:
 
 		double getStep() {
 			_lastStep = _step;
 			_step += _increment;
-			if( _step > _max ) {
-				// bounce _step off max
-				_step = _max - ( _step - _max );
-				_increment = -_increment;
-			} else if( _step < min ) {
-				// bounce _step off min
-				_step = _min + ( _min - _step );
-				_increment = -_increment;
-			}
-			return _step;
+			return _doMinMax( _step );
 		}
 
-		double getStepCumulative() {
+		double getStepAcumulate() {
 			_lastStep = _step;
 			_step += _increment;
 			_stepCumulative += _step;
-			if( _stepCumulative > _max ) {
-				// bounce _step off max
-				_step = _max - ( _stepCumulative - _max );
-				_increment = -_increment;
-			} else if( _stepCumulative < min ) {
-				// bounce _step off min
-				_step = _min + ( _min - _stepCumulative );
-				_increment = -_increment;
+
+			return _doMinMax( _stepCumulative );
+		}
+
+		double getStepAcumulateResetAtMax() {
+			_stepCumulative += _step;
+			if( _stepCumulative > _CumulativeMax ) {
+				_stepCumulative = _cumulativeMin + ( _stepCumulative - _cumulativeMax );
 			}
-			return _step;
+			return _stepCumulative;
 		}
 
 		stepperLinier( double step , double increment , double min , double max ) {
@@ -128,6 +160,12 @@ class stepperLinier : stepper {
 //				getStep();
 //			}
 //		}
+}
+
+class stepperCircular : stepper {
+}
+
+class stepperEliptic : stepper {
 }
 
 //  END:  stepper

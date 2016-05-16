@@ -3,13 +3,13 @@
 // ==================================================================
 // START: circleType family
 
-class circleShape : circleInterface // interface
+class circleShape : abstractCircle // interface
 {
 	private:
 		double _initialAngle;
 		stepper * _angleStep;
-		double tmpX;
-		double tmpY;
+		double _tmpX;
+		double _tmpY;
 
 	public:
 		/**
@@ -21,11 +21,11 @@ class circleShape : circleInterface // interface
 		virtual void rotateXY( double x , double y );
 
 		double getRadiusPointX() {
-			return tmpX;
+			return _tmpX;
 		}
 
 		double getRadiusPointY() {
-			return tmpY;
+			return _tmpY;
 		}
 
 
@@ -45,8 +45,8 @@ class circle : circleShape
 
 		void rotate() {
 			rotateXY( _radiusPointX , _radiusPointY );
-			_radiusPointX = tmpX;
-			_radiusPointY = tmpY;
+			_radiusPointX = _tmpX;
+			_radiusPointY = _tmpY;
 		}
 
 

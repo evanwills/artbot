@@ -1,5 +1,15 @@
 class boomIntegratorInterface
 {
+	public:
+		virtual void setEndPoint( double firstOriginX , double firstOriginY , double secondOriginX , double secondOriginY );
+
+		virtual double getX();
+
+		virtual double getY();
+}
+
+
+class boomIntegrator : boomIntegratorInterface {
 	private:
 		singleBoom * _firstBoom;
 		singleBoom * _secondBoom;
@@ -7,8 +17,6 @@ class boomIntegratorInterface
 		double _endY = 0;
 
 	public:
-		virtual void setEndPoint( double firstOriginX , double firstOriginY , double secondOriginX , double secondOriginY );
-
 		double getX() {
 			return _endX;
 		}
@@ -19,13 +27,12 @@ class boomIntegratorInterface
 }
 
 
-
 /**
  * @class	straightBoom the output of the circle managers provide
  *			the base points for each arm  setEndPoint() gives the
  *			third point on the triangle
  */
-class straightBoom : boomIntegratorInterface
+class straightBoom : boomIntegrator
 {
 	private:
 		singleBoom * _firstBoom;
@@ -60,7 +67,7 @@ class straightBoom : boomIntegratorInterface
  * NOTE: the distance from the pivotPoint to the end of the boom is
  *		 mirrored to join the booms back together
  */
-class simpleScissorBoom : boomIntegratorInterface
+class simpleScissorBoom : boomIntegrator
 {
 	private:
 		stepper * _pivotPosition;
@@ -104,7 +111,7 @@ class simpleScissorBoom : boomIntegratorInterface
  * NOTE: the distance from the pivotPoint to the end of the boom is
  *		 mirrored to join the booms back together
  */
-class asymetricalScissorBoom : boomIntegratorInterface
+class asymetricalScissorBoom : boomIntegrator
 {
 	public:
 		/**
@@ -195,7 +202,7 @@ class whackyScissorBoom : boomIntegratorInterface
  *			connected by a straight line and the boom comes off that
  *			line at a given offset
  */
-class Tboom : boomIntegratorInterface
+class Tboom : boomIntegrator
 {
 	private:
 		stepper * _boomOffset;

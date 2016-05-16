@@ -1,13 +1,6 @@
 // Generic interface for both circleShape and circleManager objects
 class circleInterface
 {
-	private:
-		double _originX;
-		double _originY;
-
-		double _radiusPointX;
-		double _radiusPointY;
-
 	public:
 		/**
 		 * @method	initXY() puts the _radiusPointX &
@@ -28,6 +21,47 @@ class circleInterface
 		 */
 		virtual void rotate( double x , double y );
 
+		/**
+		 * @method	setOriginXY() sets the _originX & _originY for
+		 *			the circle object
+		 */
+		virtual void setOriginXY( double x , double y );
+
+		/**
+		 * @method	getX() returns the final _radiusPointX in the
+		 *			stack (the one that will be used as the origin of
+		 *			one drawing arm)
+		 */
+		virtual double getX();
+
+		/**
+		 * @method	getY() like getX() but for the Y value
+		 */
+		virtual double getY();
+
+		/**
+		 * @method	getOriginX() returns the _originX of this
+		 *			circleManager object
+		 */
+		virtual double getOriginX();
+
+		/**
+		 * @method	getOriginY() returns the _originY of this
+		 *			circleManager object
+		 */
+		virtual double getOriginY();
+}
+
+class abstractCircle : circleInterface {
+
+	private:
+		double _originX;
+		double _originY;
+
+		double _radiusPointX;
+		double _radiusPointY;
+
+	public:
 		/**
 		 * @method	setOriginXY() sets the _originX & _originY for
 		 *			the circle object
