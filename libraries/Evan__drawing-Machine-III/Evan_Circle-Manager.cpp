@@ -138,7 +138,7 @@ class singleCircle : circleManager
 		 */
 		void rotate() {
 			_circle->setOriginXY( _originX , _originY );
-			_circle->rotate( _radiusPointX , _radiusPointY );
+			_circle->rotateXY( _radiusPointX , _radiusPointY );
 			_radiusPointX = _circle->getX();
 			_radiusPointY = _circle->getY();
 		}
