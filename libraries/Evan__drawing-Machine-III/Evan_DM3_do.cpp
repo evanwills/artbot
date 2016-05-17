@@ -13,7 +13,97 @@ dm3WorkingModel MD3;
 
 const double OFFSET = WIDTH / 2;
 const double BOOM_ONE_LEN = WIDTH * 2;
-const double BOOM_TWO_LEN = WIDTH * 2;
+const double BOOM_TWO_LEN = WIDTH * 2.25;
+
+/*
+{
+	MD3: {
+		width: 5000,
+		height: 5000,
+		booms: {
+			type: straightBoom,
+			boomOne: {
+				type: stepperFixed,
+				length: 5000
+			}
+			boomTwo: {
+				type: stepperFixed,
+				length: 5000
+			}
+		},
+		circleOne: {
+			type: multiCircle,
+			circleShape: {
+				type: circle,
+				initialAngle: 180,
+				angleStep: 0
+				radius: 12500
+			},
+			childCircle: {
+				type: multiCircle,
+				circleShape: {
+					type: circle,
+					initialAngle: 0,
+					angleStep: 0.0037
+					radius: 1613
+				},
+				childCircle: {
+					type: multiCircle,
+					circleShape: {
+						type: circle,
+						initialAngle: 0,
+						angleStep: -0.077
+						radius: 887
+					},
+					childCircle: {
+						type: null
+					}
+				}
+			},
+			originX: 2500,
+			originY: 2500
+		}
+		circleTwo: {
+			type: multiCircle,
+			circleShape: {
+				type: circle,
+				initialAngle: 120,
+				angleStep: 0
+				radius: 10000
+			},
+			childCircle: {
+				type: multiCircle,
+				circleShape: {
+					type: circle,
+					initialAngle: 0,
+					angleStep: 0.0029
+					radius: 1193
+				},
+				childCircle: {
+					type: multiCircle,
+					circleShape: {
+						type: circle,
+						initialAngle: 0,
+						angleStep: 0.083
+						radius: 1307
+					},
+					childCircle: {
+						type: null
+					}
+				}
+			},
+			originX: 2500,
+			originY: 2500
+		}
+		tableRotator: {
+			type: circle,
+			initialAngle: 0,
+			angleStep: 0.13
+			radius: 2500
+		}
+	}
+}
+*/
 
 void setup() {
 	loopTimes = new doInc(TIMES);
