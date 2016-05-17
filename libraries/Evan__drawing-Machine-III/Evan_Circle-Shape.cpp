@@ -3,14 +3,8 @@
 // ==================================================================
 // START: circleType family
 
-class circleShape : abstractCircle // interface
+class circleShapeInterface : abstractCircle // interface
 {
-	private:
-		double _initialAngle;
-		stepper * _angleStep;
-		double _tmpX;
-		double _tmpY;
-
 	public:
 		/**
 		 * @method	setRadiusPointXY() sets the _radiusPOintX &
@@ -20,6 +14,24 @@ class circleShape : abstractCircle // interface
 
 		virtual void rotateXY( double x , double y );
 
+		virtual double getRadiusPointX();
+
+		virtual double getRadiusPointY();
+}
+
+
+class abstractCircleShape : circleShapeInterface // interface
+{
+	protected:
+		stepper * _angleStep;
+		double _currentAngle;
+		double _initialAngle;
+		double _tmpAngle;
+		double _tmpX;
+		double _tmpY;
+
+	public:
+
 		double getRadiusPointX() {
 			return _tmpX;
 		}
@@ -28,13 +40,25 @@ class circleShape : abstractCircle // interface
 			return _tmpY;
 		}
 
+		double degToRad(input) {
+			return input / 57.2957795;
+		}
 
+		double radToDeg(input) {
+			return input * 57.2957795;
+		}
 }
 
 class circle : circleShape
 {
 	private:
 		stepper * _radius;
+		double _getRadius( double X , double Y ) {
+			return
+		}
+		double _getAngle( radius ) {
+
+		}
 
 	public:
 		circle( double initalAngle , stepper * angleStep , stepper * radius ) {
@@ -43,10 +67,25 @@ class circle : circleShape
 			_angleStep = angleStep;
 		}
 
+		void rotateXY( double x , double y ) {
+			double relativeX = x - _orginX;
+			double relativeY = y - _orginY;
+			double radius = sqrt( sq(relativeX) + sq(relativeY) );
+			double _tmpAngle = sin( relativeY / radius ) + _angleStep->getStep();
+
+			double newAngle =  degToRad( _tmpAngle );
+
+			_tmpX = (radius * arccos(newAngle) ) + _originX;
+			_tmpX = (radius * arcsin(newAngle) ) + _originY;
+		}
+
 		void rotate() {
+			_angleStep->updateStep();
+			_radius->updateStep();
 			rotateXY( _radiusPointX , _radiusPointY );
 			_radiusPointX = _tmpX;
 			_radiusPointY = _tmpY;
+			_currentAngle = _tmpAngle;
 		}
 
 
