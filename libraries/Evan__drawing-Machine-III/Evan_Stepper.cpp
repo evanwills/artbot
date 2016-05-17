@@ -2,7 +2,22 @@
 // ==================================================================
 // START: stepper
 
-class stepper
+class stepperInterface
+{
+	public:
+		virtual void updateStep();
+		virtual double getStep() = 0;
+		virtual double getCumulativeStep() = 0;
+		virtual double getLastStep() = 0;
+//		virtual void preLoop(int loops);
+		virtual double getMin();
+		virtual double getMax();
+		virtual void setCumlativeMinMax( double min , double max );
+		virtual bool withinMinMax( double min , double max );
+}
+
+
+class stepper : stepperInterface
 {
 	protected:
 		double _step;
@@ -14,12 +29,36 @@ class stepper
 		double _cumulativeMax;
 		bool _doCumulative = false;
 		bool _doCumulativeMinMax = false;
+		virtual void _updateStep();
+		virtual void _updateStepAcumulate();
+		virtual void _updateStepAcumulateResetAtMax();
 
 	public:
-		virtual double getStep()  = 0;
-		virtual double getStepAcumulate() = 0;
-		virtual double getStepAcumulateResetAtMax() = 0;
-		virtual double getLastStep() = 0;
+		double updateStep() {
+			if( _doCumulative == true ) {
+				if( _doCumulativeMinMax == true ) {
+					return _updateStepAcumulateResetAtMax()
+				} else {
+					return _updateStepAcumulate()
+				}
+			} else {
+				return _updateStep();
+			}
+		}
+		double getStep() {
+			if( _doCumulative == false ) {
+				return _step;
+			} else {
+				return _stepCumulative;
+			}
+		}
+		double getCumulativeStep() {
+			return _stepCumulative;
+		}
+
+		double getLastStep() {
+			return _lastStep;
+		}
 //		virtual void preLoop(int loops);
 
 		double getMin() {
@@ -55,30 +94,18 @@ class stepper
 }
 
 class stepperFixed : stepper {
-	public:
-		stepperFixed( double step ) {
-			_step = step;
-			_min = step;
-			_max = step;
-		}
-
-		double getStep() {
-			if( _doCumulative == true ) {
-				if( _doCumulativeMinMax == true ) {
-					return getStepAcumulateResetAtMax()
-				} else {
-					return getStepAcumulate()
-				}
-			}
+	protected:
+		void _updateStep() {
+			// do nothing
 			return _step;
 		}
 
-		double getStepAcumulate() {
+		void _updateStepAcumulate() {
 			_stepCumulative += _step;
 			return _stepCumulative;
 		}
 
-		double getStepAcumulateResetAtMax() {
+		double _updateStepAcumulateResetAtMax() {
 			_stepCumulative += _step;
 			if( _stepCumulative >= _CumulativeMax ) {
 				_stepCumulative = _cumulativeMin + ( _stepCumulative - _cumulativeMax );
@@ -86,12 +113,12 @@ class stepperFixed : stepper {
 			return _stepCumulative;
 		}
 
-		double getLastStep() {
-			return _lastStep;
+	public:
+		stepperFixed( double step ) {
+			_step = step;
+			_min = step;
+			_max = step;
 		}
-
-//		void preLoop(int loops) {
-//		}
 }
 
 class stepperLinier : stepper {
@@ -109,15 +136,13 @@ class stepperLinier : stepper {
 			}
 		}
 
-	public:
-
-		double getStep() {
+		double _updateStep() {
 			_lastStep = _step;
 			_step += _increment;
 			return _doMinMax( _step );
 		}
 
-		double getStepAcumulate() {
+		double _updateStepAcumulate() {
 			_lastStep = _step;
 			_step += _increment;
 			_stepCumulative += _step;
@@ -125,13 +150,15 @@ class stepperLinier : stepper {
 			return _doMinMax( _stepCumulative );
 		}
 
-		double getStepAcumulateResetAtMax() {
+		double _updateStepAcumulateResetAtMax() {
 			_stepCumulative += _step;
 			if( _stepCumulative > _CumulativeMax ) {
 				_stepCumulative = _cumulativeMin + ( _stepCumulative - _cumulativeMax );
 			}
 			return _stepCumulative;
 		}
+
+	public:
 
 		stepperLinier( double step , double increment , double min , double max ) {
 			if( min > max ) {
@@ -144,10 +171,6 @@ class stepperLinier : stepper {
 			_step = step;
 			_increment = increment;
 			getStep();
-		}
-
-		double getLastStep() {
-			return _lastStep
 		}
 
 //		void preLoop(int loops) {
