@@ -44,6 +44,8 @@ class circleManager : abstractCircle
 		 */
 		virtual bool depthOK( bool fix ) = 0;
 
+		virtual void fixDepth( );
+
 		/**
 		 * @method	setChildCircle() adds another circleManager
 		 *			object to the top of the stack
@@ -107,6 +109,9 @@ class singleCircle : circleManager
 
 		bool depthOK() {
 			return true;
+		}
+
+		bool fixDepth() {
 		}
 
 		void setChildCircle( circleManager * childCircle ) {
@@ -216,30 +221,38 @@ class multiCircle : singleCircle
 		 * @method depthOK() checks whether the hierarchy of nested
 		 *			circles is correct
 		 */
-		bool depthOK( bool fix) {
+		bool depthOK( ) {
 			bool output = false;
-			if( _childCircle == null ){
-				if( _depth != 0 ) {
-					if( fix == true ){
-						_depth = 0;
-						output true;
-					}
-				} else {
+			if( _childCircle == null ) {
+				if( _depth == 0 ) {
 					output true;
 				}
-			} else {
-				bool output = _childCircle->depthOK( fix );
-				if( _childCircle->getDepth() + 1 != _depth ) {
-					if( fix == true ){
-						_depth = _childCircle->getDepth() + 1;
-						output = true;
-					}
-				} else {
-					output = true;
-				}
+			} else if( _childCircle->getDepth() + 1 == _depth ) {
+				output = true;
 			}
 			// this looks OK lets see whether the child is OK
 			return output;
+		}
+
+
+		/**
+		 * @method fixDepth() makes sure the hierarchy of nested
+		 *			circles is correct
+		 */
+		void fixDepth( bool fix) {
+			if( _childCircle == null ){
+				if( _depth != 0 ) {
+					_depth = 0;
+				}
+			} else {
+				_childCircle->fixDepth();
+				int tmpDepth = _childCircle->getDepth();
+				if( tmpDepth + 1 != _depth ) {
+					if( fix == true ){
+						_depth = tmpDepth + 1;
+					}
+				}
+			}
 		}
 
 		void setRadiusPointXY( double x , double y , unsigned int depth ) {

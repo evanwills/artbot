@@ -14,13 +14,11 @@ class dm3WorkingModel {
 			_width = width;
 			_height = height;
 			_booms = booms;
-//			if( firstCircle->depthOK() != true ) {
-//				// throw
-//			}
+
+			firstCircle->fixDepth();
 			_firstCircle = firstCircle;
-//			if( firstCircle->depthOK() != true ) {
-//				// throw
-//			}
+
+			secondCircle->fixDepth();
 			_secondCircle = secondCircle;
 			_tableRotator = tableRotator;
 		}
