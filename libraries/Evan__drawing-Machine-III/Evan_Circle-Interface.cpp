@@ -19,7 +19,12 @@ class circleInterface
 		/**
 		 * @method rotate() move the radiusPoint to a new location
 		 */
-		virtual void rotate( double x , double y );
+		virtual void rotate();
+
+		/**
+		 * @method rotateXY() move the radiusPoint to a new location
+		 */
+		virtual void rotateXY( double x , double y );
 
 		/**
 		 * @method	setOriginXY() sets the _originX & _originY for
